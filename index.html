@@ -1,404 +1,960 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="it" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Presentazione: Il Comparatore</title>
+    <title>Il Comparatore - Strumento di Misura | Presentazione Scolastica</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
+                        },
+                        accent: {
+                            DEFAULT: '#f59e0b',
+                            hover: '#d97706',
+                        },
+                        darkbg: '#0f172a',
+                        cardbg: '#1e293b',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Inter & FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --primary: #1e3a8a;
-            --primary-light: #3b82f6;
-            --accent: #f59e0b;
-            --bg-dark: #0f172a;
-            --bg-card: #1e293b;
-            --text-light: #f8fafc;
-            --text-muted: #94a3b8;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
         body {
-            background-color: var(--bg-dark);
-            color: var(--text-light);
-            line-height: 1.6;
-            padding-bottom: 80px;
-        }
-
-        /* Header / Banner */
-        header {
-            background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
-            padding: 40px 20px;
-            text-align: center;
-            border-bottom: 3px solid var(--accent);
-        }
-
-        header h1 {
-            font-size: 2.5rem;
-            color: #ffffff;
-            margin-bottom: 10px;
-        }
-
-        header p {
-            font-size: 1.2rem;
-            color: var(--text-muted);
-        }
-
-        .badge {
-            background-color: var(--accent);
-            color: #000;
-            font-weight: bold;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            display: inline-block;
-            margin-bottom: 15px;
-        }
-
-        /* Contenitore Griglia */
-        .container {
-            max-width: 1100px;
-            margin: 40px auto;
-            padding: 0 20px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-        }
-
-        /* Card di Presentazione */
-        .card {
-            background-color: var(--bg-card);
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
-            border: 1px solid #334155;
-            transition: transform 0.3s ease, border-color 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            border-color: var(--primary-light);
-        }
-
-        .card h2 {
-            font-size: 1.4rem;
-            color: var(--primary-light);
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .card ul {
-            list-style-type: none;
-        }
-
-        .card ul li {
-            position: relative;
-            padding-left: 20px;
-            margin-bottom: 10px;
-            color: #cbd5e1;
-        }
-
-        .card ul li::before {
-            content: "•";
-            color: var(--accent);
-            font-weight: bold;
-            font-size: 1.2rem;
-            position: absolute;
-            left: 0;
-            top: -2px;
-        }
-
-        .highlight {
-            color: var(--accent);
-            font-weight: bold;
-        }
-
-        /* Assistente Virtuale (Chatbot) */
-        #assistant-toggle {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: var(--primary-light);
-            color: white;
-            border: none;
-            border-radius: 50px;
-            padding: 15px 25px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 14px rgba(59, 130, 246, 0.5);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            z-index: 1000;
-            transition: background 0.2s;
-        }
-
-        #assistant-toggle:hover {
-            background-color: #2563eb;
-        }
-
-        #chat-window {
-            position: fixed;
-            bottom: 80px;
-            right: 20px;
-            width: 360px;
-            max-width: 90vw;
-            height: 480px;
-            background-color: #1e293b;
-            border: 1px solid #475569;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            display: none;
-            flex-direction: column;
-            overflow: hidden;
-            z-index: 1000;
-        }
-
-        .chat-header {
-            background-color: var(--primary);
-            padding: 15px;
-            font-weight: bold;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #334155;
-        }
-
-        .close-btn {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.2rem;
-            cursor: pointer;
-        }
-
-        .chat-body {
-            flex: 1;
-            padding: 15px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .message {
-            padding: 10px 14px;
-            border-radius: 10px;
-            font-size: 0.9rem;
-            max-width: 85%;
-        }
-
-        .bot-msg {
-            background-color: #334155;
-            color: #f8fafc;
-            align-self: flex-start;
-        }
-
-        .user-msg {
-            background-color: var(--primary-light);
-            color: white;
-            align-self: flex-end;
-        }
-
-        .chat-questions {
-            padding: 10px;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background-color: #0f172a;
-            border-top: 1px solid #334155;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            max-height: 180px;
-            overflow-y: auto;
+            color: #f8fafc;
         }
-
-        .q-btn {
-            background-color: #1e293b;
-            color: var(--text-light);
-            border: 1px solid #475569;
-            padding: 8px 12px;
-            border-radius: 6px;
-            text-align: left;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.2s;
+        .glass-nav {
+            background: rgba(30, 41, 59, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
-
-        .q-btn:hover {
-            background-color: var(--primary-light);
-            border-color: var(--primary-light);
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #3b82f6;
         }
     </style>
 </head>
-<body>
+<body class="min-h-screen flex flex-col justify-between custom-scrollbar bg-slate-900 text-slate-100">
 
-    <!-- Header -->
-    <header>
-        <span class="badge">Presentazione di Meccanica e Laboratorio</span>
-        <h1>Il Comparatore</h1>
-        <p>Strumento di misura e controllo dimensionale di precisione</p>
+    <!-- Navigation Bar -->
+    <header class="sticky top-0 z-40 glass-nav border-b border-slate-700/60 shadow-xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo / Title -->
+                <div class="flex items-center gap-3 cursor-pointer" onclick="navigateTo('home')">
+                    <div class="bg-gradient-to-br from-blue-500 to-indigo-600 p-2.5 rounded-xl shadow-lg shadow-blue-500/20">
+                        <i class="fa-solid fa-gauge-high text-xl text-white"></i>
+                    </div>
+                    <div>
+                        <span class="font-bold text-lg tracking-wide bg-gradient-to-r from-blue-400 to-amber-400 bg-clip-text text-transparent">
+                            IL COMPARATORE
+                        </span>
+                        <span class="text-xs text-slate-400 block -mt-1 font-medium">Metrologia & Meccanica</span>
+                    </div>
+                </div>
+
+                <!-- Desktop Navigation Buttons -->
+                <nav class="hidden md:flex items-center space-x-2">
+                    <button id="nav-home" onclick="navigateTo('home')" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 text-slate-300 hover:text-white hover:bg-slate-800">
+                        <i class="fa-solid fa-house mr-1.5 text-blue-400"></i> Panoramica
+                    </button>
+                    
+                    <!-- Highlighted Main Button -->
+                    <button id="nav-types" onclick="navigateTo('types')" class="nav-btn px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-lg shadow-blue-500/30 border border-blue-400/30 flex items-center gap-2">
+                        <i class="fa-solid fa-microscope text-amber-300"></i>
+                        <span>Tipi di Comparatore</span>
+                        <span class="bg-amber-400 text-slate-950 text-xs px-1.5 py-0.5 rounded-full font-bold">3 Modelli</span>
+                    </button>
+
+                    <button id="nav-physics" onclick="navigateTo('physics')" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 text-slate-300 hover:text-white hover:bg-slate-800">
+                        <i class="fa-solid fa-gears mr-1.5 text-amber-400"></i> Funzionamento
+                    </button>
+                    <button id="nav-assistant" onclick="navigateTo('assistant')" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 text-slate-300 hover:text-white hover:bg-slate-800">
+                        <i class="fa-solid fa-robot mr-1.5 text-emerald-400"></i> Q&A Assistente
+                    </button>
+                </nav>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center">
+                    <button onclick="toggleMobileMenu()" class="text-slate-300 hover:text-white p-2 rounded-lg focus:outline-none bg-slate-800 border border-slate-700">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu" class="hidden md:hidden bg-slate-800/95 border-b border-slate-700 px-4 pt-2 pb-4 space-y-2">
+            <button onclick="navigateTo('home'); toggleMobileMenu();" class="w-full text-left px-4 py-2.5 rounded-lg text-slate-200 hover:bg-slate-700 font-medium">
+                <i class="fa-solid fa-house mr-2 text-blue-400"></i> Panoramica
+            </button>
+            <button onclick="navigateTo('types'); toggleMobileMenu();" class="w-full text-left px-4 py-2.5 rounded-lg bg-blue-600 text-white font-semibold flex items-center justify-between">
+                <span><i class="fa-solid fa-microscope mr-2 text-amber-300"></i> Tipi di Comparatore</span>
+                <span class="bg-amber-400 text-slate-950 text-xs px-2 py-0.5 rounded-full font-bold">3 Modelli</span>
+            </button>
+            <button onclick="navigateTo('physics'); toggleMobileMenu();" class="w-full text-left px-4 py-2.5 rounded-lg text-slate-200 hover:bg-slate-700 font-medium">
+                <i class="fa-solid fa-gears mr-2 text-amber-400"></i> Funzionamento & Precisione
+            </button>
+            <button onclick="navigateTo('assistant'); toggleMobileMenu();" class="w-full text-left px-4 py-2.5 rounded-lg text-slate-200 hover:bg-slate-700 font-medium">
+                <i class="fa-solid fa-robot mr-2 text-emerald-400"></i> Assistente Virtuale
+            </button>
+        </div>
     </header>
 
-    <!-- Griglia Contenuti -->
-    <main class="container">
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-        <!-- Card 1: Come è fatto -->
-        <section class="card">
-            <h2>⏱️ Come è fatto</h2>
-            <ul>
-                <li><strong>Struttura:</strong> Esternamente sembra un orologio.</li>
-                <li><strong>Tastatore:</strong> Un'asta mobile inferiore che tocca direttamente il pezzo da misurare.</li>
-                <li><strong>Quadrante grande:</strong> Diviso in <span class="highlight">100 tacche</span> con una ghiera girevole per azzerare la lancetta.</li>
-                <li><strong>Quadrante piccolo:</strong> Funziona da contagiri e misura i millimetri interi.</li>
-            </ul>
-        </section>
+        <!-- SECTION 1: HOME / PANORAMICA -->
+        <section id="page-home" class="page-section space-y-8 transition-opacity duration-300">
+            <!-- Hero Banner -->
+            <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-800 via-slate-800/90 to-blue-950 border border-slate-700 p-8 md:p-12 shadow-2xl">
+                <div class="absolute -right-10 -bottom-10 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="relative z-10 max-w-3xl space-y-4">
+                    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                        <i class="fa-solid fa-graduation-cap"></i> Presentazione Didattica Meccanica
+                    </span>
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white">
+                        Il Comparatore Meccanico e Digitale
+                    </h1>
+                    <p class="text-slate-300 text-base md:text-lg leading-relaxed">
+                        Lo strumento fondamentale in metrologia industriale per il controllo di tolleranza, planarità, eccentricità e concentricità di pezzi meccanici tramite <strong class="text-amber-400">misurazione differenziale</strong>.
+                    </p>
+                    
+                    <div class="pt-4 flex flex-wrap gap-4">
+                        <button onclick="navigateTo('types')" class="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold shadow-lg shadow-blue-600/30 transition-all flex items-center gap-2">
+                            <span>Esplora i 3 Tipi di Comparatore</span>
+                            <i class="fa-solid fa-arrow-right text-amber-300"></i>
+                        </button>
+                        <button onclick="navigateTo('physics')" class="px-6 py-3 rounded-xl bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold border border-slate-600 transition-all flex items-center gap-2">
+                            <i class="fa-solid fa-play text-blue-400"></i>
+                            <span>Prova il Simulatore</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
 
-        <!-- Card 2: A cosa serve -->
-        <section class="card">
-            <h2>🎯 A cosa serve</h2>
-            <ul>
-                <li><strong>Funzione:</strong> Controlla se un pezzo è deformato, storto o presenta imperfezioni.</li>
-                <li><strong>Verifiche:</strong> Misura la <span class="highlight">planarità</span> (superfici piatte) e la <span class="highlight">concentricità</span> (pezzi sul tornio).</li>
-                <li><strong>Misura Comparativa:</strong> Non misura partendo da zero come il calibro, ma effettua un <em>confronto</em> rispetto a una misura campione.</li>
-            </ul>
-        </section>
-
-        <!-- Card 3: Come funziona -->
-        <section class="card">
-            <h2>⚙️ Come funziona</h2>
-            <ul>
-                <li><strong>Movimento spinta:</strong> Quando il tastatore si muove verso l'alto, aziona una cremagliera e degli ingranaggi interni.</li>
-                <li><strong>Trasformazione:</strong> Gli ingranaggi convertono il movimento rettilineo della punta nel movimento rotatorio delle lancette sul quadrante.</li>
-            </ul>
-        </section>
-
-        <!-- Card 4: Precisione -->
-        <section class="card">
-            <h2>📐 Precisione</h2>
-            <ul>
-                <li><strong>Approssimazione Centesimale:</strong> Ogni tacca del quadrante corrisponde a <span class="highlight">0,01 mm</span> (un centesimo di millimetro).</li>
-                <li><strong>Modelli Millesimali:</strong> Esistono varianti ad altissima precisione che arrivano a <span class="highlight">0,001 mm</span>.</li>
-            </ul>
-        </section>
-
-        <!-- Card 5: Modelli Diversi -->
-        <section class="card">
-            <h2>🛠️ Modelli e Varianti</h2>
-            <ul>
-                <li><strong>Corsa dell'asta:</strong> Varia in base alle esigenze, da <span class="highlight">10 mm fino a 100 mm</span>.</li>
-                <li><strong>Forma della punta:</strong> Può essere a <em>sfera</em> o <em>piatta</em> in base al tipo di superficie da controllare.</li>
-            </ul>
-        </section>
-
-        <!-- Card 6: Modello Digitale -->
-        <section class="card">
-            <h2>💻 Il Modello Digitale</h2>
-            <ul>
-                <li><strong>Display LCD:</strong> Sostituisce il quadrante analogico con una lettura digitale immediata.</li>
-                <li><strong>Vantaggi:</strong>
-                    <ul>
-                        <li>Azzera gli errori umani di lettura delle lancette.</li>
-                        <li>Permette l'azzeramento rapido tramite pulsante.</li>
-                        <li>Consente di inviare i dati direttamente al computer per l'analisi.</li>
+            <!-- Key Info Cards Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Card 1: Come è Fatto -->
+                <div class="bg-slate-800/90 border border-slate-700/80 rounded-2xl p-6 shadow-xl hover:border-blue-500/50 transition-all group">
+                    <div class="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-clock"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">Come è Fatto</h3>
+                    <ul class="text-sm text-slate-300 space-y-2">
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-circle-check text-blue-400 text-xs mt-1"></i>
+                            <span><strong>Cassa circolare:</strong> Simile ad un orologio da tasca.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-circle-check text-blue-400 text-xs mt-1"></i>
+                            <span><strong>Tastatore (Asta):</strong> Punta mobile che rileva le micro-variazioni.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-circle-check text-blue-400 text-xs mt-1"></i>
+                            <span><strong>Doppio Quadrante:</strong> 100 tacche (centesimi) + contagiri millimetrico.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-circle-check text-blue-400 text-xs mt-1"></i>
+                            <span><strong>Ghiera Orientabile:</strong> Per azzerare la lancetta in qualsiasi punto.</span>
+                        </li>
                     </ul>
-                </li>
-            </ul>
+                </div>
+
+                <!-- Card 2: A Cosa Serve -->
+                <div class="bg-slate-800/90 border border-slate-700/80 rounded-2xl p-6 shadow-xl hover:border-amber-500/50 transition-all group">
+                    <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-bullseye"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">A Cosa Serve</h3>
+                    <ul class="text-sm text-slate-300 space-y-2">
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-circle-check text-amber-400 text-xs mt-1"></i>
+                            <span>Verifica di <strong>Planarità</strong> su superfici piatte (piani di riscontro).</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-circle-check text-amber-400 text-xs mt-1"></i>
+                            <span>Verifica di <strong>Concentricità</strong> ed eccentricità su pezzi al tornio.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-circle-check text-amber-400 text-xs mt-1"></i>
+                            <span>Misura per <strong>confronto</strong> rispetto a un blocco di azzeramento (blocchetti piano-paralleli).</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Card 3: Principio Meccanico -->
+                <div class="bg-slate-800/90 border border-slate-700/80 rounded-2xl p-6 shadow-xl hover:border-emerald-500/50 transition-all group">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-gears"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">Come Funziona</h3>
+                    <p class="text-sm text-slate-300 leading-relaxed mb-3">
+                        Trasforma il movimento rettilineo dell'asta tastatrice in movimento rotatorio delle lancette.
+                    </p>
+                    <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-700 text-xs text-emerald-300 font-mono">
+                        Asta spinta $\rightarrow$ Cremagliera $\rightarrow$ Treno Ingranaggi $\rightarrow$ Lancetta
+                    </div>
+                </div>
+
+                <!-- Card 4: Risoluzione & Precisione -->
+                <div class="bg-slate-800/90 border border-slate-700/80 rounded-2xl p-6 shadow-xl hover:border-purple-500/50 transition-all group">
+                    <div class="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-ruler-combined"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">Precisione</h3>
+                    <ul class="text-sm text-slate-300 space-y-2">
+                        <li class="flex items-start gap-2">
+                            <span class="bg-blue-500/20 text-blue-300 font-mono text-xs px-2 py-0.5 rounded font-bold">0.01 mm</span>
+                            <span>Sui modelli centesimali standard (1 tacca = 1 centesimo).</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="bg-purple-500/20 text-purple-300 font-mono text-xs px-2 py-0.5 rounded font-bold">0.001 mm</span>
+                            <span>Sui modelli millesimali digitali per laboratorio.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Interactive Banner Callout -->
+            <div class="bg-gradient-to-r from-blue-900/40 via-slate-800 to-indigo-900/40 rounded-2xl border border-blue-500/30 p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-lg">
+                <div class="space-y-2 text-center md:text-left">
+                    <h3 class="text-2xl font-bold text-white">Vuoi vedere i 3 principali modelli nel dettaglio?</h3>
+                    <p class="text-slate-300 text-sm">Scopri il comparatore digitale portatile, quello centesimale a quadrante con base magnetica e quello digitale da laboratorio.</p>
+                </div>
+                <button onclick="navigateTo('types')" class="shrink-0 px-8 py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl shadow-lg shadow-amber-500/20 transition-all transform hover:-translate-y-0.5">
+                    Vai ai Tipi di Comparatore <i class="fa-solid fa-circle-arrow-right ml-2"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- SECTION 2: TIPI DI COMPARATORE (DETTAGLIATO) -->
+        <section id="page-types" class="page-section hidden space-y-8 transition-opacity duration-300">
+            <div class="text-center max-w-3xl mx-auto space-y-3">
+                <span class="px-3 py-1 rounded-full text-xs font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30 uppercase tracking-wider">
+                    Sezione Principale
+                </span>
+                <h2 class="text-3xl md:text-4xl font-extrabold text-white">I Principali Tipi di Comparatore</h2>
+                <p class="text-slate-300 text-sm md:text-base">
+                    In officina e nei laboratori metrologici vengono utilizzati modelli differenti a seconda del grado di precisione necessario e dell'ambiente di lavoro.
+                </p>
+            </div>
+
+            <!-- Grid of 3 Specific Models -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+                <!-- MODELLO 1: DIGITALE PORTATILE -->
+                <div class="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden shadow-2xl flex flex-col hover:border-blue-500 transition-all group">
+                    <div class="relative bg-slate-950 h-64 overflow-hidden flex items-center justify-center p-4">
+                        <img src="https://www.samatools.it/wp-content/uploads/2024/10/SA029M-12TS.jpg" 
+                             alt="Comparatore Digitale Portatile" 
+                             onerror="this.onerror=null; this.src='https://placehold.co/600x400/1e293b/3b82f6?text=Comparatore+Digitale+Portatile';"
+                             class="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300 cursor-pointer"
+                             onclick="openLightbox(this.src, 'Comparatore Digitale Portatile')">
+                        <div class="absolute top-3 right-3 bg-blue-600/90 text-white text-xs font-bold px-2.5 py-1 rounded-md backdrop-blur">
+                            Digitale / Portatile
+                        </div>
+                        <button onclick="openLightbox('https://www.samatools.it/wp-content/uploads/2024/10/SA029M-12TS.jpg', 'Comparatore Digitale Portatile')" class="absolute bottom-3 right-3 bg-slate-800/80 hover:bg-slate-700 text-slate-200 text-xs px-2.5 py-1.5 rounded-lg border border-slate-600 flex items-center gap-1.5 backdrop-blur">
+                            <i class="fa-solid fa-magnifying-glass-plus"></i> Ingrandisci
+                        </button>
+                    </div>
+
+                    <div class="p-6 flex-grow flex flex-col justify-between space-y-4">
+                        <div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="bg-blue-500/10 text-blue-400 text-xs font-semibold px-2 py-0.5 rounded border border-blue-500/20">0,01 mm / 0,001 mm</span>
+                                <span class="bg-slate-700 text-slate-300 text-xs font-semibold px-2 py-0.5 rounded">Uso in Officina</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-2">Comparatore Digitale Portatile</h3>
+                            <p class="text-sm text-slate-300 leading-relaxed">
+                                Strumento compatto, ideale per verifiche rapide direttamente a bordo macchina e in officina. Dotato di display LCD ad alta leggibilità che permette l'azzeramento rapido (<strong>Zero SET</strong>) in qualsiasi posizione della corsa.
+                            </p>
+                        </div>
+
+                        <div class="space-y-2 border-t border-slate-700/80 pt-4">
+                            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Caratteristiche Chiave:</h4>
+                            <ul class="text-xs text-slate-300 space-y-1.5">
+                                <li class="flex items-center gap-2">
+                                    <i class="fa-solid fa-check text-blue-400"></i>
+                                    <span>Conversione immediata tra mm ed pollici (inch).</span>
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <i class="fa-solid fa-check text-blue-400"></i>
+                                    <span>Uscita dati SPC per collegamento a PC e software SPC.</span>
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <i class="fa-solid fa-check text-blue-400"></i>
+                                    <span>Riduzione al minimo degli errori umani di parallellismo/lettura.</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MODELLO 2: CENTESIMALE A QUADRANTE CON BASE MAGNETICA -->
+                <div class="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden shadow-2xl flex flex-col hover:border-amber-500 transition-all group">
+                    <div class="relative bg-slate-950 h-64 overflow-hidden flex items-center justify-center p-4">
+                        <img src="https://www.grecoshop.it/shop/449-large_default/comparatore-centesimale-a-quadrante-con-base-magnetica-5135-2.jpg" 
+                             alt="Comparatore Centesimale a Quadrante" 
+                             onerror="this.onerror=null; this.src='https://placehold.co/600x400/1e293b/f59e0b?text=Comparatore+con+Base+Magnetica';"
+                             class="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300 cursor-pointer"
+                             onclick="openLightbox(this.src, 'Comparatore Centesimale con Base Magnetica')">
+                        <div class="absolute top-3 right-3 bg-amber-600/90 text-white text-xs font-bold px-2.5 py-1 rounded-md backdrop-blur">
+                            Meccanico / Base Magnetica
+                        </div>
+                        <button onclick="openLightbox('https://www.grecoshop.it/shop/449-large_default/comparatore-centesimale-a-quadrante-con-base-magnetica-5135-2.jpg', 'Comparatore Centesimale con Base Magnetica')" class="absolute bottom-3 right-3 bg-slate-800/80 hover:bg-slate-700 text-slate-200 text-xs px-2.5 py-1.5 rounded-lg border border-slate-600 flex items-center gap-1.5 backdrop-blur">
+                            <i class="fa-solid fa-magnifying-glass-plus"></i> Ingrandisci
+                        </button>
+                    </div>
+
+                    <div class="p-6 flex-grow flex flex-col justify-between space-y-4">
+                        <div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="bg-amber-500/10 text-amber-400 text-xs font-semibold px-2 py-0.5 rounded border border-amber-500/20">0,01 mm (Centesimale)</span>
+                                <span class="bg-slate-700 text-slate-300 text-xs font-semibold px-2 py-0.5 rounded">Tornio & Fresa</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-2">Comparatore Centesimale a Quadrante</h3>
+                            <p class="text-sm text-slate-300 leading-relaxed">
+                                Il modello meccanico classico più diffuso nelle lavorazioni meccaniche. Spesso fornito con **base magnetica con snodo orientabile** On/Off per fissarlo in modo estremamente rigido sui basamenti metallici delle macchine utensili.
+                            </p>
+                        </div>
+
+                        <div class="space-y-2 border-t border-slate-700/80 pt-4">
+                            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Caratteristiche Chiave:</h4>
+                            <ul class="text-xs text-slate-300 space-y-1.5">
+                                <li class="flex items-center gap-2">
+                                    <i class="fa-solid fa-check text-amber-400"></i>
+                                    <span>Ghiera ruotabile per l'azzeramento manuale della lancetta.</span>
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <i class="fa-solid fa-check text-amber-400"></i>
+                                    <span>Doppio quadrante: scala centesimale + contagiri dei millimetri interi.</span>
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <i class="fa-solid fa-check text-amber-400"></i>
+                                    <span>Base magnetica commutabile (magnete permanente attivabile con leva).</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MODELLO 3: DIGITALE DA LABORATORIO -->
+                <div class="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden shadow-2xl flex flex-col hover:border-emerald-500 transition-all group">
+                    <div class="relative bg-slate-950 h-64 overflow-hidden flex items-center justify-center p-4">
+                        <img src="https://i.ebayimg.com/00/s/MTYwMFgxMzg1/z/iikAAOSwPe1UJZDN/$_1.JPG?set_id=880000500F" 
+                             alt="Comparatore Digitale da Laboratorio" 
+                             onerror="this.onerror=null; this.src='https://placehold.co/600x400/1e293b/10b981?text=Comparatore+da+Laboratorio';"
+                             class="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300 cursor-pointer"
+                             onclick="openLightbox(this.src, 'Comparatore Digitale da Laboratorio su Stativo')">
+                        <div class="absolute top-3 right-3 bg-emerald-600/90 text-white text-xs font-bold px-2.5 py-1 rounded-md backdrop-blur">
+                            Laboratorio / Stativo
+                        </div>
+                        <button onclick="openLightbox('https://i.ebayimg.com/00/s/MTYwMFgxMzg1/z/iikAAOSwPe1UJZDN/$_1.JPG?set_id=880000500F', 'Comparatore Digitale da Laboratorio su Stativo')" class="absolute bottom-3 right-3 bg-slate-800/80 hover:bg-slate-700 text-slate-200 text-xs px-2.5 py-1.5 rounded-lg border border-slate-600 flex items-center gap-1.5 backdrop-blur">
+                            <i class="fa-solid fa-magnifying-glass-plus"></i> Ingrandisci
+                        </button>
+                    </div>
+
+                    <div class="p-6 flex-grow flex flex-col justify-between space-y-4">
+                        <div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="bg-emerald-500/10 text-emerald-400 text-xs font-semibold px-2 py-0.5 rounded border border-emerald-500/20">0,001 mm (Millesimale)</span>
+                                <span class="bg-slate-700 text-slate-300 text-xs font-semibold px-2 py-0.5 rounded">Sala Metrologica</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-2">Comparatore Digitale da Laboratorio</h3>
+                            <p class="text-sm text-slate-300 leading-relaxed">
+                                Strumento ad altissima precisione montato su uno **stativo/supporto pesante di misura in ghisa o granito**. Ideale per le sale metrologiche di controllo qualità e per la calibrazione di campioni priva di vibrazioni.
+                            </p>
+                        </div>
+
+                        <div class="space-y-2 border-t border-slate-700/80 pt-4">
+                            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Caratteristiche Chiave:</h4>
+                            <ul class="text-xs text-slate-300 space-y-1.5">
+                                <li class="flex items-center gap-2">
+                                    <i class="fa-solid fa-check text-emerald-400"></i>
+                                    <span>Sensibilità millesimale (0,001 mm = 1 micron).</span>
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <i class="fa-solid fa-check text-emerald-400"></i>
+                                    <span>Stativo ultra-rigido che annulla le inflessioni e le vibrazioni micro-mmetriche.</span>
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <i class="fa-solid fa-check text-emerald-400"></i>
+                                    <span>Integrazione con sistemi automatici di rilevamento tolleranze MAX/MIN/TOL.</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Comparison Table -->
+            <div class="bg-slate-800 rounded-2xl border border-slate-700 p-6 shadow-xl overflow-x-auto">
+                <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-table-list text-amber-400"></i> Confronto Sintetico tra i Modelli
+                </h3>
+                <table class="w-full text-left text-xs sm:text-sm text-slate-300">
+                    <thead class="bg-slate-900/80 text-slate-200 text-xs uppercase font-bold border-b border-slate-700">
+                        <tr>
+                            <th class="p-3">Caratteristica</th>
+                            <th class="p-3 text-blue-400">Digitale Portatile</th>
+                            <th class="p-3 text-amber-400">Centesimale a Quadrante</th>
+                            <th class="p-3 text-emerald-400">Digitale da Laboratorio</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-700/50">
+                        <tr>
+                            <td class="p-3 font-semibold text-white">Risoluzione tipica</td>
+                            <td class="p-3">0,01 mm / 0,001 mm</td>
+                            <td class="p-3">0,01 mm (1 centesimo)</td>
+                            <td class="p-3 font-bold text-emerald-400">0,001 mm (1 micron)</td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 font-semibold text-white">Supporto / Fissaggio</td>
+                            <td class="p-3">Manuale / Supporti leggeri</td>
+                            <td class="p-3">Base magnetica con snodo</td>
+                            <td class="p-3">Stativo pesante in ghisa/granito</td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 font-semibold text-white">Lettura Dato</td>
+                            <td class="p-3">Display LCD immediato</td>
+                            <td class="p-3">Analogica su lancette</td>
+                            <td class="p-3">Display LCD con interfaccia PC</td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 font-semibold text-white">Ambiente Ideale</td>
+                            <td class="p-3">Controllo rapido sul campo</td>
+                            <td class="p-3">Officina meccanica (Tornio/Fresa)</td>
+                            <td class="p-3">Sala metrologica condizionata</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- SECTION 3: COME FUNZIONA & SIMULATORE INTERATTIVO -->
+        <section id="page-physics" class="page-section hidden space-y-8 transition-opacity duration-300">
+            <div class="text-center max-w-3xl mx-auto space-y-3">
+                <span class="px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30 uppercase tracking-wider">
+                    Meccanica Interna & Simulazione
+                </span>
+                <h2 class="text-3xl md:text-4xl font-extrabold text-white">Come Funziona & Simulatore</h2>
+                <p class="text-slate-300 text-sm md:text-base">
+                    Prova a muovere l'asta del tastatore con lo slider per vedere in tempo reale la rotazione della lancetta grande (centesimi) e della lancetta piccola (millimetri interi)!
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                
+                <!-- SIMULATOR WIDGET (LEFT / CENTER) -->
+                <div class="lg:col-span-7 bg-slate-800 border border-slate-700 rounded-3xl p-6 shadow-2xl space-y-6">
+                    <div class="flex items-center justify-between border-b border-slate-700 pb-4">
+                        <div class="flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-red-500 animate-pulse"></span>
+                            <h3 class="font-bold text-white text-lg">Simulatore Interattivo di Lettura</h3>
+                        </div>
+                        <button onclick="resetGaugeSim()" class="px-3 py-1 bg-slate-700 hover:bg-slate-600 text-xs font-bold rounded-lg text-slate-200 transition-all border border-slate-600">
+                            <i class="fa-solid fa-rotate-left mr-1"></i> Azzera
+                        </button>
+                    </div>
+
+                    <!-- Gauge Graphics Container -->
+                    <div class="flex flex-col items-center justify-center space-y-6">
+                        
+                        <!-- SVG Dial Simulator -->
+                        <div class="relative w-64 h-64 sm:w-72 sm:h-72">
+                            <svg viewBox="0 0 300 300" class="w-full h-full drop-shadow-2xl">
+                                <!-- Outer Bezel -->
+                                <circle cx="150" cy="150" r="140" fill="#1e293b" stroke="#475569" stroke-width="8"/>
+                                <circle cx="150" cy="150" r="132" fill="#0f172a" stroke="#3b82f6" stroke-width="3"/>
+                                
+                                <!-- Main Dial Markings (100 ticks) -->
+                                <g id="dial-ticks" stroke="#64748b" stroke-width="1.5">
+                                    <!-- Ticks generated via JS -->
+                                </g>
+
+                                <!-- Numbers around dial (0, 10, 20... 90) -->
+                                <g id="dial-numbers" font-family="sans-serif" font-size="10" fill="#94a3b8" text-anchor="middle" font-weight="bold">
+                                    <!-- Numbers generated via JS -->
+                                </g>
+
+                                <!-- Small Revolution Counter (0 - 10 mm) -->
+                                <g transform="translate(150, 95)">
+                                    <circle cx="0" cy="0" r="28" fill="#1e293b" stroke="#475569" stroke-width="1.5"/>
+                                    <text x="0" y="-16" font-size="7" fill="#cbd5e1" text-anchor="middle" font-weight="bold">mm</text>
+                                    <!-- Small needle -->
+                                    <line id="small-needle" x1="0" y1="0" x2="0" y2="-20" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round"/>
+                                    <circle cx="0" cy="0" r="3" fill="#f59e0b"/>
+                                </g>
+
+                                <!-- Main Needle (Centesimal) -->
+                                <g transform="translate(150, 150)">
+                                    <!-- Counter-weight end -->
+                                    <line id="main-needle" x1="0" y1="18" x2="0" y2="-110" stroke="#ef4444" stroke-width="3" stroke-linecap="round"/>
+                                    <circle cx="0" cy="0" r="8" fill="#ef4444" stroke="#ffffff" stroke-width="2"/>
+                                </g>
+
+                                <!-- Glass reflection overlay -->
+                                <circle cx="150" cy="150" r="130" fill="url(#glass-grad)" opacity="0.15" pointer-events="none"/>
+                                <defs>
+                                    <linearGradient id="glass-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#ffffff"/>
+                                        <stop offset="100%" stop-color="#000000"/>
+                                    </linearGradient>
+                                </defs>
+                            </svg>
+
+                            <!-- Plunger stem below gauge -->
+                            <div class="absolute left-1/2 -translate-x-1/2 -bottom-12 w-6 bg-slate-600 rounded-b-sm border border-slate-500 flex flex-col items-center justify-end" style="height: 60px;">
+                                <div id="plunger-tip" class="w-4 bg-amber-400 rounded-b-full transition-all duration-75 shadow-md" style="height: 20px;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Readout Display Boxes -->
+                        <div class="grid grid-cols-2 gap-4 w-full pt-6">
+                            <div class="bg-slate-900 border border-slate-700 p-3 rounded-xl text-center">
+                                <span class="text-xs text-slate-400 font-semibold block uppercase">Spostamento Asta</span>
+                                <span id="display-mm" class="text-2xl font-mono font-bold text-amber-400">0.00 mm</span>
+                            </div>
+                            <div class="bg-slate-900 border border-slate-700 p-3 rounded-xl text-center">
+                                <span class="text-xs text-slate-400 font-semibold block uppercase">Tacche Rilevate</span>
+                                <span id="display-ticks" class="text-2xl font-mono font-bold text-blue-400">0 / 100</span>
+                            </div>
+                        </div>
+
+                        <!-- Interactive Control Slider -->
+                        <div class="w-full space-y-2 bg-slate-900/60 p-4 rounded-xl border border-slate-700">
+                            <div class="flex justify-between items-center text-xs font-bold text-slate-300">
+                                <span><i class="fa-solid fa-hand-pointer text-amber-400 mr-1"></i> Trascina per muovere il Tastatore:</span>
+                                <span class="text-slate-400">Corsa: 0.00 - 10.00 mm</span>
+                            </div>
+                            <input type="range" id="plunger-slider" min="0" max="1000" value="0" step="1" 
+                                   oninput="updateGaugeFromSlider(this.value)"
+                                   class="w-full h-3 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-amber-400">
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- EXPLANATION RIGHT COLUMN -->
+                <div class="lg:col-span-5 space-y-6">
+                    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
+                        <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-diagram-project text-blue-400"></i> Spiegazione del Movimento
+                        </h3>
+                        <p class="text-sm text-slate-300 leading-relaxed">
+                            Ogni volta che l'asta mobile (tastatore) rientra di **1,00 mm**, la lancetta principale compie **1 giro completo a 360°** sul quadrante grande.
+                        </p>
+
+                        <div class="space-y-3 pt-2">
+                            <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-700/80">
+                                <div class="text-xs font-bold text-amber-400 uppercase tracking-wider mb-1">1. Quadrante Centesimale</div>
+                                <p class="text-xs text-slate-300">Ha 100 tacche. Ogni tacca equivale esattamente a <strong class="text-white font-mono">0,01 mm</strong> (1 centesimo di millimetro).</p>
+                            </div>
+
+                            <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-700/80">
+                                <div class="text-xs font-bold text-blue-400 uppercase tracking-wider mb-1">2. Contagiri Millimetrico</div>
+                                <p class="text-xs text-slate-300">Il quadrante più piccolo conta i millimetri interi (da 0 a 10 mm) ogni volta che la lancetta grande fa un giro completo.</p>
+                            </div>
+
+                            <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-700/80">
+                                <div class="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-1">3. Ghiera ed Azzeramento</div>
+                                <p class="text-xs text-slate-300">Facendo ruotare la cassa esterna (ghiera), si allinea lo ZERO della scala alla lancetta prima di iniziare il controllo del pezzo.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Formula Box -->
+                    <div class="bg-gradient-to-br from-slate-800 to-blue-950 border border-blue-500/30 rounded-2xl p-6 shadow-xl text-xs space-y-2">
+                        <div class="font-bold text-slate-200 text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-calculator text-amber-400"></i> Calcolo della Lettura:
+                        </div>
+                        <div class="bg-slate-900/90 p-3 rounded-lg font-mono text-slate-300 border border-slate-700">
+                            Misura Totale = (Giri Quadrante Piccolo × 1 mm) + (Tacche Lancetta Grande × 0.01 mm)
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECTION 4: ASSISTENTE VIRTUALE Q&A FULL PAGE -->
+        <section id="page-assistant" class="page-section hidden space-y-8 transition-opacity duration-300">
+            <div class="text-center max-w-3xl mx-auto space-y-3">
+                <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 uppercase tracking-wider">
+                    Supporto Interattivo
+                </span>
+                <h2 class="text-3xl md:text-4xl font-extrabold text-white">Assistente Virtuale della Presentazione</h2>
+                <p class="text-slate-300 text-sm md:text-base">
+                    Fai clic sulle domande predefinite per ricevere subito spiegazioni chiare da mostrare ai compagni o ai docenti durante la risposta!
+                </p>
+            </div>
+
+            <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+                
+                <!-- Quick Preset Buttons Column -->
+                <div class="md:col-span-5 space-y-3">
+                    <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider px-1">Domande Frequenti Predefinite</h3>
+                    
+                    <button onclick="triggerAssistantQuestion(1)" class="w-full text-left p-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-emerald-500/50 text-slate-200 text-sm transition-all flex items-center justify-between group">
+                        <span class="font-medium">A cosa serve il comparatore?</span>
+                        <i class="fa-solid fa-chevron-right text-xs text-slate-500 group-hover:text-emerald-400"></i>
+                    </button>
+
+                    <button onclick="triggerAssistantQuestion(2)" class="w-full text-left p-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-emerald-500/50 text-slate-200 text-sm transition-all flex items-center justify-between group">
+                        <span class="font-medium">Qual è la differenza tra i vari tipi?</span>
+                        <i class="fa-solid fa-chevron-right text-xs text-slate-500 group-hover:text-emerald-400"></i>
+                    </button>
+
+                    <button onclick="triggerAssistantQuestion(3)" class="w-full text-left p-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-emerald-500/50 text-slate-200 text-sm transition-all flex items-center justify-between group">
+                        <span class="font-medium">Come funziona con base magnetica?</span>
+                        <i class="fa-solid fa-chevron-right text-xs text-slate-500 group-hover:text-emerald-400"></i>
+                    </button>
+
+                    <button onclick="triggerAssistantQuestion(4)" class="w-full text-left p-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-emerald-500/50 text-slate-200 text-sm transition-all flex items-center justify-between group">
+                        <span class="font-medium">Perché usare quello da laboratorio?</span>
+                        <i class="fa-solid fa-chevron-right text-xs text-slate-500 group-hover:text-emerald-400"></i>
+                    </button>
+
+                    <button onclick="triggerAssistantQuestion(5)" class="w-full text-left p-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-emerald-500/50 text-slate-200 text-sm transition-all flex items-center justify-between group">
+                        <span class="font-medium">Come si azzera lo strumento?</span>
+                        <i class="fa-solid fa-chevron-right text-xs text-slate-500 group-hover:text-emerald-400"></i>
+                    </button>
+                </div>
+
+                <!-- Dedicated Chat Feed View -->
+                <div class="md:col-span-7 bg-slate-800 border border-slate-700 rounded-2xl h-[480px] flex flex-col overflow-hidden shadow-2xl">
+                    <div class="bg-slate-900 p-4 border-b border-slate-700 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center font-bold">
+                                <i class="fa-solid fa-bot text-lg"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-white text-sm">Assistente Didattico Metrologia</h4>
+                                <span class="text-xs text-emerald-400 flex items-center gap-1">
+                                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> Pronto a rispondere
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="full-chat-body" class="flex-grow p-4 overflow-y-auto space-y-4 custom-scrollbar">
+                        <div class="bg-slate-700/60 border border-slate-600/60 rounded-xl p-3.5 text-sm text-slate-200 max-w-[85%]">
+                            👋 Benvenuto! Seleziona una delle domande a sinistra per visualizzare la spiegazione dettagliata.
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </section>
 
     </main>
 
-    <!-- Botone per Aprire l'Assistente -->
-    <button id="assistant-toggle" onclick="toggleChat()">
-        💬 Assistente Virtuale
-    </button>
+    <!-- FLOATING CHAT WIDGET (BOTTOM RIGHT) -->
+    <div id="chat-widget-container" class="fixed bottom-6 right-6 z-50">
+        <!-- Floating Toggle Button -->
+        <button id="chat-widget-btn" onclick="toggleFloatingChat()" class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white p-4 rounded-full shadow-2xl border border-blue-400/40 flex items-center gap-3 transition-transform hover:scale-105 active:scale-95 group">
+            <i class="fa-solid fa-comments text-xl text-amber-300"></i>
+            <span class="font-bold text-sm hidden sm:inline pr-1">Chiedi all'Assistente</span>
+            <span class="w-3 h-3 rounded-full bg-amber-400 border-2 border-slate-900"></span>
+        </button>
 
-    <!-- Widget Chat Assistente -->
-    <div id="chat-window">
-        <div class="chat-header">
-            <span>🤖 Assistente sul Comparatore</span>
-            <button class="close-btn" onclick="toggleChat()">✕</button>
-        </div>
-        <div class="chat-body" id="chat-body">
-            <div class="message bot-msg">
-                Ciao! Sono il tuo assistente di presentazione. Clicca su una delle domande qui sotto per scoprire di più sul comparatore!
+        <!-- Floating Chat Modal Popup -->
+        <div id="floating-chat-window" class="hidden absolute bottom-16 right-0 w-80 sm:w-96 h-[480px] bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl flex-col overflow-hidden">
+            <!-- Header -->
+            <div class="bg-slate-900 px-4 py-3 border-b border-slate-700 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-robot text-emerald-400"></i>
+                    <span class="font-bold text-sm text-white">Assistente Comparatore</span>
+                </div>
+                <button onclick="toggleFloatingChat()" class="text-slate-400 hover:text-white text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
             </div>
-        </div>
-        <div class="chat-questions">
-            <button class="q-btn" onclick="askQuestion(1)">A cosa serve principalmente?</button>
-            <button class="q-btn" onclick="askQuestion(2)">Perché si dice che fa una misura 'di confronto'?</button>
-            <button class="q-btn" onclick="askQuestion(3)">Come si legge la misura sul quadrante?</button>
-            <button class="q-btn" onclick="askQuestion(4)">Qual è la differenza del modello digitale?</button>
-            <button class="q-btn" onclick="askQuestion(5)">Come funziona il meccanismo interno?</button>
+
+            <!-- Chat Messages Area -->
+            <div id="widget-chat-body" class="flex-grow p-4 overflow-y-auto space-y-3 custom-scrollbar text-xs">
+                <div class="bg-slate-700/80 p-3 rounded-xl text-slate-200">
+                    Seleziona un quesito rapido qui sotto per avere la risposta:
+                </div>
+            </div>
+
+            <!-- Quick Question Buttons in Widget -->
+            <div class="p-3 bg-slate-900 border-t border-slate-700 space-y-1.5 max-h-48 overflow-y-auto custom-scrollbar">
+                <button onclick="triggerAssistantQuestion(1)" class="w-full text-left px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs rounded border border-slate-700 truncate">
+                    • A cosa serve il comparatore?
+                </button>
+                <button onclick="triggerAssistantQuestion(2)" class="w-full text-left px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs rounded border border-slate-700 truncate">
+                    • Differenze tra i tipi di comparatore?
+                </button>
+                <button onclick="triggerAssistantQuestion(3)" class="w-full text-left px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs rounded border border-slate-700 truncate">
+                    • Come funziona la base magnetica?
+                </button>
+                <button onclick="triggerAssistantQuestion(4)" class="w-full text-left px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs rounded border border-slate-700 truncate">
+                    • Perché il modello da laboratorio?
+                </button>
+                <button onclick="triggerAssistantQuestion(5)" class="w-full text-left px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs rounded border border-slate-700 truncate">
+                    • Come si azzera la lancetta o lo schermo?
+                </button>
+            </div>
         </div>
     </div>
 
-    <!-- Script JavaScript per il funzionamento della Chat -->
+    <!-- IMAGE LIGHTBOX MODAL -->
+    <div id="lightbox-modal" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md hidden items-center justify-center p-4" onclick="closeLightbox()">
+        <div class="relative max-w-4xl w-full bg-slate-900 border border-slate-700 rounded-2xl overflow-hidden shadow-2xl p-4 flex flex-col items-center" onclick="event.stopPropagation()">
+            <button onclick="closeLightbox()" class="absolute top-3 right-3 bg-slate-800 text-slate-300 hover:text-white p-2 rounded-full border border-slate-700 z-10">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <img id="lightbox-img" src="" alt="Dettaglio Immagine" class="max-h-[75vh] w-auto object-contain rounded-lg">
+            <p id="lightbox-title" class="text-slate-200 font-bold mt-3 text-center text-sm sm:text-base"></p>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-950 border-t border-slate-800 py-6 text-center text-xs text-slate-400">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div>
+                <span class="font-bold text-slate-300">Presentazione Scolastica:</span> Il Comparatore Meccanico e Digitale
+            </div>
+            <div>
+                Realizzato per Laboratorio di Metrologia & Meccanica
+            </div>
+        </div>
+    </footer>
+
+    <!-- SCRIPT LOGIC -->
     <script>
-        function toggleChat() {
-            const chatWin = document.getElementById('chat-window');
-            if (chatWin.style.display === 'flex') {
-                chatWin.style.display = 'none';
-            } else {
-                chatWin.style.display = 'flex';
+        
+        // Single Page Navigation Function
+        function navigateTo(sectionId) {
+            // Hide all pages
+            const pages = document.querySelectorAll('.page-section');
+            pages.forEach(p => p.classList.add('hidden'));
+
+            // Show selected page
+            const targetPage = document.getElementById(`page-${sectionId}`);
+            if (targetPage) {
+                targetPage.classList.remove('hidden');
             }
+
+            // Update active state in nav buttons
+            const navButtons = document.querySelectorAll('.nav-btn');
+            navButtons.forEach(btn => {
+                btn.classList.remove('bg-slate-800', 'text-white');
+            });
+
+            const activeBtn = document.getElementById(`nav-${sectionId}`);
+            if (activeBtn && sectionId !== 'types') {
+                activeBtn.classList.add('bg-slate-800', 'text-white');
+            }
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Database delle risposte
-        const qaDatabase = {
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Lightbox Handler
+        function openLightbox(src, title) {
+            document.getElementById('lightbox-img').src = src;
+            document.getElementById('lightbox-title').textContent = title;
+            const modal = document.getElementById('lightbox-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeLightbox() {
+            const modal = document.getElementById('lightbox-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        // Floating Chat Toggle
+        function toggleFloatingChat() {
+            const chatWin = document.getElementById('floating-chat-window');
+            chatWin.classList.toggle('hidden');
+            chatWin.classList.toggle('flex');
+        }
+
+        // Q&A Database
+        const qaData = {
             1: {
-                question: "A cosa serve principalmente?",
-                answer: "Serve a verificare se un pezzo è storto o deformato. In particolare controlla la planarità delle superfici e la concentricità dei pezzi cilindrici montati al tornio."
+                q: "A cosa serve il comparatore?",
+                a: "Il comparatore serve a misurare gli scostamenti di forma e posizione di un pezzo meccanico. Viene impiegato per verificare la planarità di superfici piane, la concentricità/eccentricità di alberi al tornio e la corrispondenza rispetto a una misura campione."
             },
             2: {
-                question: "Perché si dice che fa una misura 'di confronto'?",
-                answer: "A differenza del calibro, il comparatore non misura la dimensione totale partendo da zero, ma rileva la differenza (lo scostamento) rispetto a una quota di riferimento azzerata."
+                q: "Qual è la differenza tra i vari tipi di comparatore?",
+                a: "1) Il Digitale Portatile è leggero e veloce per controlli generici. 2) Il Centesimale Meccanico con Base Magnetica si fissa saldamente sulle macchine utensili (es. tornio o fresa). 3) Il Digitale da Laboratorio è su uno stativo ultra-rigido ed ha risoluzione millesimale (0,001 mm) per la sala metrologica."
             },
             3: {
-                question: "Come si legge la misura sul quadrante?",
-                answer: "Ogni tacca del quadrante grande vale 0,01 mm (un centesimo). Quando la lancetta compie un giro completo (100 tacche = 1 mm), la lancetta del quadrante piccolo avanza di 1 millimetro."
+                q: "Come funziona il comparatore con base magnetica?",
+                a: "La base contiene un magnete permanente orientabile tramite una levetta On/Off. In posizione ON, il flusso magnetico aziona la forza di bloccaggio sulla struttura in acciaio del tornio, garantendo la rigidità necessaria affinché la lancetta non vibri durante il controllo."
             },
             4: {
-                question: "Qual è la differenza del modello digitale?",
-                answer: "Il modello digitale ha uno schermo LCD. È più veloce, elimina gli errori di lettura dell'operatore, si azzera con un tasto e può collegarsi a un PC per salvare i dati."
+                q: "Perché usare il modello da laboratorio millesimale?",
+                a: "Nei laboratori di controllo qualità servono tolleranze strettissime. Un comparatore millesimale (0,001 mm = 1 micron) montato su uno stativo pesante elimina le flessioni meccaniche ed evita errori di misurazione dovuti alle vibrazioni dell'ambiente."
             },
             5: {
-                question: "Come funziona il meccanismo interno?",
-                answer: "Quando il tastatore (l'asta mobile) tocca il pezzo e sale, aziona una serie di ingranaggi interni che trasformano il movimento rettilineo della punta nel movimento di rotazione delle lancette."
+                q: "Come si azzera la lancetta o lo schermo?",
+                a: "Nel modello meccanico analogico si ruota manualmente la ghiera esterna del quadrante finché la tacca dello ZERO si allinea con la lancetta. Nel modello digitale si posiziona il tastatore e si preme semplicemente il pulsante 'ZERO / SET'."
             }
         };
 
-        function askQuestion(id) {
-            const chatBody = document.getElementById('chat-body');
-            const data = qaDatabase[id];
-
+        function triggerAssistantQuestion(id) {
+            const data = qaData[id];
             if (!data) return;
 
-            // Messaggio Utente
-            const userMsgDiv = document.createElement('div');
-            userMsgDiv.className = 'message user-msg';
-            userMsgDiv.textContent = data.question;
-            chatBody.appendChild(userMsgDiv);
+            // Update Main Assistant Section
+            const fullBody = document.getElementById('full-chat-body');
+            appendChatMessage(fullBody, data.q, data.a);
 
-            // Risposta Bot (dopo un piccolo ritardo)
-            setTimeout(() => {
-                const botMsgDiv = document.createElement('div');
-                botMsgDiv.className = 'message bot-msg';
-                botMsgDiv.textContent = data.answer;
-                chatBody.appendChild(botMsgDiv);
-                
-                // Scroll verso il basso automatico
-                chatBody.scrollTop = chatBody.scrollHeight;
-            }, 300);
-
-            // Scroll immediato verso il messaggio utente
-            chatBody.scrollTop = chatBody.scrollHeight;
+            // Update Widget Chat
+            const widgetBody = document.getElementById('widget-chat-body');
+            appendChatMessage(widgetBody, data.q, data.a);
         }
+
+        function appendChatMessage(container, question, answer) {
+            // User Question bubble
+            const userDiv = document.createElement('div');
+            userDiv.className = "bg-blue-600/90 text-white p-3 rounded-xl max-w-[85%] ml-auto text-xs sm:text-sm shadow font-medium";
+            userDiv.textContent = question;
+            container.appendChild(userDiv);
+
+            // Bot Answer bubble
+            setTimeout(() => {
+                const botDiv = document.createElement('div');
+                botDiv.className = "bg-slate-700 border border-slate-600 text-slate-100 p-3.5 rounded-xl max-w-[85%] text-xs sm:text-sm space-y-1 shadow";
+                botDiv.innerHTML = `<span class="font-bold text-amber-400 block text-xs mb-1"><i class="fa-solid fa-robot mr-1"></i> Risposta:</span>${answer}`;
+                container.appendChild(botDiv);
+                container.scrollTop = container.scrollHeight;
+            }, 200);
+
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // --- SIMULATOR GRAPHICS ENGINE ---
+        function initGaugeGraphic() {
+            const ticksGroup = document.getElementById('dial-ticks');
+            const numbersGroup = document.getElementById('dial-numbers');
+
+            if (!ticksGroup || !numbersGroup) return;
+
+            // Generate 100 ticks
+            for (let i = 0; i < 100; i++) {
+                const angle = (i * 3.6) * (Math.PI / 180);
+                const isMajor = i % 10 === 0;
+                const isMedium = i % 5 === 0 && !isMajor;
+
+                const rOuter = 128;
+                const rInner = isMajor ? 112 : (isMedium ? 118 : 122);
+
+                const x1 = 150 + rOuter * Math.sin(angle);
+                const y1 = 150 - rOuter * Math.cos(angle);
+                const x2 = 150 + rInner * Math.sin(angle);
+                const y2 = 150 - rInner * Math.cos(angle);
+
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', x1);
+                line.setAttribute('y1', y1);
+                line.setAttribute('x2', x2);
+                line.setAttribute('y2', y2);
+                line.setAttribute('stroke', isMajor ? '#f8fafc' : '#64748b');
+                line.setAttribute('stroke-width', isMajor ? '2' : '1');
+                ticksGroup.appendChild(line);
+
+                // Major Numbers
+                if (isMajor) {
+                    const rText = 100;
+                    const tx = 150 + rText * Math.sin(angle);
+                    const ty = 150 - rText * Math.cos(angle) + 4;
+
+                    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    text.setAttribute('x', tx);
+                    text.setAttribute('y', ty);
+                    text.textContent = i;
+                    numbersGroup.appendChild(text);
+                }
+            }
+        }
+
+        function updateGaugeFromSlider(val) {
+            // val ranges from 0 to 1000 (representing 0.00 to 10.00 mm)
+            const mm = val / 100; // e.g. 1.25 mm
+            
+            // Displays
+            document.getElementById('display-mm').textContent = `${mm.toFixed(2)} mm`;
+            
+            const totalTicks = Math.round(mm * 100);
+            const currentLapTicks = totalTicks % 100;
+            document.getElementById('display-ticks').textContent = `${currentLapTicks} / 100`;
+
+            // Rotations
+            // 1 mm = 360 degrees for main needle
+            const mainDegrees = mm * 360;
+            const mainNeedle = document.getElementById('main-needle');
+            if (mainNeedle) {
+                mainNeedle.setAttribute('transform', `rotate(${mainDegrees})`);
+            }
+
+            // Small needle (0 - 10 mm = 360 degrees, so 36 degrees per mm)
+            const smallDegrees = mm * 36;
+            const smallNeedle = document.getElementById('small-needle');
+            if (smallNeedle) {
+                smallNeedle.setAttribute('transform', `rotate(${smallDegrees})`);
+            }
+
+            // Plunger visual movement
+            const plungerTip = document.getElementById('plunger-tip');
+            if (plungerTip) {
+                // Plunger moves upward when measured
+                const heightPx = 20 + (mm * 3);
+                plungerTip.style.height = `${heightPx}px`;
+            }
+        }
+
+        function resetGaugeSim() {
+            const slider = document.getElementById('plunger-slider');
+            if (slider) {
+                slider.value = 0;
+                updateGaugeFromSlider(0);
+            }
+        }
+
+        // On Load Initializations
+        window.addEventListener('DOMContentLoaded', () => {
+            initGaugeGraphic();
+            updateGaugeFromSlider(0);
+        });
     </script>
 </body>
 </html>
