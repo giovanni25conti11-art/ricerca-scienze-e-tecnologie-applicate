@@ -1,1 +1,404 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presentazione: Il Comparatore</title>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-light: #3b82f6;
+            --accent: #f59e0b;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --text-light: #f8fafc;
+            --text-muted: #94a3b8;
+        }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            line-height: 1.6;
+            padding-bottom: 80px;
+        }
+
+        /* Header / Banner */
+        header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom: 3px solid var(--accent);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+        }
+
+        .badge {
+            background-color: var(--accent);
+            color: #000;
+            font-weight: bold;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        /* Contenitore Griglia */
+        .container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        /* Card di Presentazione */
+        .card {
+            background-color: var(--bg-card);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            border: 1px solid #334155;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-light);
+        }
+
+        .card h2 {
+            font-size: 1.4rem;
+            color: var(--primary-light);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card ul {
+            list-style-type: none;
+        }
+
+        .card ul li {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 10px;
+            color: #cbd5e1;
+        }
+
+        .card ul li::before {
+            content: "•";
+            color: var(--accent);
+            font-weight: bold;
+            font-size: 1.2rem;
+            position: absolute;
+            left: 0;
+            top: -2px;
+        }
+
+        .highlight {
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        /* Assistente Virtuale (Chatbot) */
+        #assistant-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--primary-light);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(59, 130, 246, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+            transition: background 0.2s;
+        }
+
+        #assistant-toggle:hover {
+            background-color: #2563eb;
+        }
+
+        #chat-window {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 360px;
+            max-width: 90vw;
+            height: 480px;
+            background-color: #1e293b;
+            border: 1px solid #475569;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 1000;
+        }
+
+        .chat-header {
+            background-color: var(--primary);
+            padding: 15px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #334155;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .chat-body {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .message {
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            max-width: 85%;
+        }
+
+        .bot-msg {
+            background-color: #334155;
+            color: #f8fafc;
+            align-self: flex-start;
+        }
+
+        .user-msg {
+            background-color: var(--primary-light);
+            color: white;
+            align-self: flex-end;
+        }
+
+        .chat-questions {
+            padding: 10px;
+            background-color: #0f172a;
+            border-top: 1px solid #334155;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 180px;
+            overflow-y: auto;
+        }
+
+        .q-btn {
+            background-color: #1e293b;
+            color: var(--text-light);
+            border: 1px solid #475569;
+            padding: 8px 12px;
+            border-radius: 6px;
+            text-align: left;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .q-btn:hover {
+            background-color: var(--primary-light);
+            border-color: var(--primary-light);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <span class="badge">Presentazione di Meccanica e Laboratorio</span>
+        <h1>Il Comparatore</h1>
+        <p>Strumento di misura e controllo dimensionale di precisione</p>
+    </header>
+
+    <!-- Griglia Contenuti -->
+    <main class="container">
+
+        <!-- Card 1: Come è fatto -->
+        <section class="card">
+            <h2>⏱️ Come è fatto</h2>
+            <ul>
+                <li><strong>Struttura:</strong> Esternamente sembra un orologio.</li>
+                <li><strong>Tastatore:</strong> Un'asta mobile inferiore che tocca direttamente il pezzo da misurare.</li>
+                <li><strong>Quadrante grande:</strong> Diviso in <span class="highlight">100 tacche</span> con una ghiera girevole per azzerare la lancetta.</li>
+                <li><strong>Quadrante piccolo:</strong> Funziona da contagiri e misura i millimetri interi.</li>
+            </ul>
+        </section>
+
+        <!-- Card 2: A cosa serve -->
+        <section class="card">
+            <h2>🎯 A cosa serve</h2>
+            <ul>
+                <li><strong>Funzione:</strong> Controlla se un pezzo è deformato, storto o presenta imperfezioni.</li>
+                <li><strong>Verifiche:</strong> Misura la <span class="highlight">planarità</span> (superfici piatte) e la <span class="highlight">concentricità</span> (pezzi sul tornio).</li>
+                <li><strong>Misura Comparativa:</strong> Non misura partendo da zero come il calibro, ma effettua un <em>confronto</em> rispetto a una misura campione.</li>
+            </ul>
+        </section>
+
+        <!-- Card 3: Come funziona -->
+        <section class="card">
+            <h2>⚙️ Come funziona</h2>
+            <ul>
+                <li><strong>Movimento spinta:</strong> Quando il tastatore si muove verso l'alto, aziona una cremagliera e degli ingranaggi interni.</li>
+                <li><strong>Trasformazione:</strong> Gli ingranaggi convertono il movimento rettilineo della punta nel movimento rotatorio delle lancette sul quadrante.</li>
+            </ul>
+        </section>
+
+        <!-- Card 4: Precisione -->
+        <section class="card">
+            <h2>📐 Precisione</h2>
+            <ul>
+                <li><strong>Approssimazione Centesimale:</strong> Ogni tacca del quadrante corrisponde a <span class="highlight">0,01 mm</span> (un centesimo di millimetro).</li>
+                <li><strong>Modelli Millesimali:</strong> Esistono varianti ad altissima precisione che arrivano a <span class="highlight">0,001 mm</span>.</li>
+            </ul>
+        </section>
+
+        <!-- Card 5: Modelli Diversi -->
+        <section class="card">
+            <h2>🛠️ Modelli e Varianti</h2>
+            <ul>
+                <li><strong>Corsa dell'asta:</strong> Varia in base alle esigenze, da <span class="highlight">10 mm fino a 100 mm</span>.</li>
+                <li><strong>Forma della punta:</strong> Può essere a <em>sfera</em> o <em>piatta</em> in base al tipo di superficie da controllare.</li>
+            </ul>
+        </section>
+
+        <!-- Card 6: Modello Digitale -->
+        <section class="card">
+            <h2>💻 Il Modello Digitale</h2>
+            <ul>
+                <li><strong>Display LCD:</strong> Sostituisce il quadrante analogico con una lettura digitale immediata.</li>
+                <li><strong>Vantaggi:</strong>
+                    <ul>
+                        <li>Azzera gli errori umani di lettura delle lancette.</li>
+                        <li>Permette l'azzeramento rapido tramite pulsante.</li>
+                        <li>Consente di inviare i dati direttamente al computer per l'analisi.</li>
+                    </ul>
+                </li>
+            </ul>
+        </section>
+
+    </main>
+
+    <!-- Botone per Aprire l'Assistente -->
+    <button id="assistant-toggle" onclick="toggleChat()">
+        💬 Assistente Virtuale
+    </button>
+
+    <!-- Widget Chat Assistente -->
+    <div id="chat-window">
+        <div class="chat-header">
+            <span>🤖 Assistente sul Comparatore</span>
+            <button class="close-btn" onclick="toggleChat()">✕</button>
+        </div>
+        <div class="chat-body" id="chat-body">
+            <div class="message bot-msg">
+                Ciao! Sono il tuo assistente di presentazione. Clicca su una delle domande qui sotto per scoprire di più sul comparatore!
+            </div>
+        </div>
+        <div class="chat-questions">
+            <button class="q-btn" onclick="askQuestion(1)">A cosa serve principalmente?</button>
+            <button class="q-btn" onclick="askQuestion(2)">Perché si dice che fa una misura 'di confronto'?</button>
+            <button class="q-btn" onclick="askQuestion(3)">Come si legge la misura sul quadrante?</button>
+            <button class="q-btn" onclick="askQuestion(4)">Qual è la differenza del modello digitale?</button>
+            <button class="q-btn" onclick="askQuestion(5)">Come funziona il meccanismo interno?</button>
+        </div>
+    </div>
+
+    <!-- Script JavaScript per il funzionamento della Chat -->
+    <script>
+        function toggleChat() {
+            const chatWin = document.getElementById('chat-window');
+            if (chatWin.style.display === 'flex') {
+                chatWin.style.display = 'none';
+            } else {
+                chatWin.style.display = 'flex';
+            }
+        }
+
+        // Database delle risposte
+        const qaDatabase = {
+            1: {
+                question: "A cosa serve principalmente?",
+                answer: "Serve a verificare se un pezzo è storto o deformato. In particolare controlla la planarità delle superfici e la concentricità dei pezzi cilindrici montati al tornio."
+            },
+            2: {
+                question: "Perché si dice che fa una misura 'di confronto'?",
+                answer: "A differenza del calibro, il comparatore non misura la dimensione totale partendo da zero, ma rileva la differenza (lo scostamento) rispetto a una quota di riferimento azzerata."
+            },
+            3: {
+                question: "Come si legge la misura sul quadrante?",
+                answer: "Ogni tacca del quadrante grande vale 0,01 mm (un centesimo). Quando la lancetta compie un giro completo (100 tacche = 1 mm), la lancetta del quadrante piccolo avanza di 1 millimetro."
+            },
+            4: {
+                question: "Qual è la differenza del modello digitale?",
+                answer: "Il modello digitale ha uno schermo LCD. È più veloce, elimina gli errori di lettura dell'operatore, si azzera con un tasto e può collegarsi a un PC per salvare i dati."
+            },
+            5: {
+                question: "Come funziona il meccanismo interno?",
+                answer: "Quando il tastatore (l'asta mobile) tocca il pezzo e sale, aziona una serie di ingranaggi interni che trasformano il movimento rettilineo della punta nel movimento di rotazione delle lancette."
+            }
+        };
+
+        function askQuestion(id) {
+            const chatBody = document.getElementById('chat-body');
+            const data = qaDatabase[id];
+
+            if (!data) return;
+
+            // Messaggio Utente
+            const userMsgDiv = document.createElement('div');
+            userMsgDiv.className = 'message user-msg';
+            userMsgDiv.textContent = data.question;
+            chatBody.appendChild(userMsgDiv);
+
+            // Risposta Bot (dopo un piccolo ritardo)
+            setTimeout(() => {
+                const botMsgDiv = document.createElement('div');
+                botMsgDiv.className = 'message bot-msg';
+                botMsgDiv.textContent = data.answer;
+                chatBody.appendChild(botMsgDiv);
+                
+                // Scroll verso il basso automatico
+                chatBody.scrollTop = chatBody.scrollHeight;
+            }, 300);
+
+            // Scroll immediato verso il messaggio utente
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+    </script>
+</body>
+</html>
